@@ -55,12 +55,12 @@ public class UsuarioServlet extends HttpServlet {
 			result = usuarioDao.registerUserSAP(usuario);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
 		//response.sendRedirect("");
 		//doGet(request, response);
-		
 		if (result > 0)
 		{
 			retorno = "Solicitação realizada com sucesso.Um email foi enviado para " + usuario.getEmail() + " com a nova senha";
