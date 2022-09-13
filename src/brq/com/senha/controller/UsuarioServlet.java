@@ -57,6 +57,7 @@ public class UsuarioServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		//response.sendRedirect("");
 		//doGet(request, response);
 		
