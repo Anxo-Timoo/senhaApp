@@ -1,0 +1,5 @@
+jco.server.connection_count=2
+jco.server.gwhost=SAPPROD1
+jco.server.progid=RFC_DFE
+jco.server.gwserv=sapgw01
+jco.server.repository_destination=CLIENT_POOL
