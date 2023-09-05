@@ -1,8 +1,8 @@
 jco.client.lang=PT
 jco.destination.peak_limit=10
-jco.client.client=120
+jco.client.client=300
 jco.client.passwd=rfc@brq12
 jco.client.user=rfcbrq
 jco.client.sysnr=00
 jco.destination.pool_capacity=3
-jco.client.ashost=RJSRVSAPD155
+jco.client.ashost=SAPPROD1

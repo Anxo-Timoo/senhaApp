@@ -1,11 +1,16 @@
 package brq.com.senha.controller;
 
 import java.io.IOException;
+import java.util.Random;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.sap.conn.jco.JCoRuntimeException;
 
 import brq.com.senha.dao.UsuarioDAO;
 import brq.com.senha.model.Usuario;
@@ -33,7 +38,10 @@ public class UsuarioServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
 		response.getWriter().append("Served at: ").append(request.getContextPath());
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/index.jsp");
+		dispatcher.forward(request,response);
 	}
 
 	/**
@@ -43,38 +51,54 @@ public class UsuarioServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		int result = 0;
 		String retorno = "";
+		String erroJCO = "";
 		int sysubrc = 0;
+		Random r = new Random();
 		String usuarioSap = request.getParameter("usuario");
 		String email = request.getParameter("email");
 		
 		Usuario usuario = new Usuario();
 		usuario.setEmail(email);
 		usuario.setLoginSap(usuarioSap);
+		short randomNumber = (short)r.nextInt(Short.MAX_VALUE + 1);
+		usuario.setSenha(String.valueOf(randomNumber));
 		
 		try {
 			result = usuarioDao.registerUserSAP(usuario);
-		} catch (ClassNotFoundException e) {
+		} 
+		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			
+			erroJCO = e.getMessage();
 			e.printStackTrace();
+		}
+		
+		catch(JCoRuntimeException ej) {
+			erroJCO = ej.getMessage();
+		}
+		catch(Exception ex) {
+			erroJCO = ex.getMessage();
 		}
 		
 		//response.sendRedirect("");
 		//doGet(request, response);
 		if (result > 0)
 		{
-			retorno = "Solicitação realizada com sucesso.Um email foi enviado para " + usuario.getEmail() + " com a nova senha";
+			retorno = "Solicitação realizada com sucesso.Um email foi enviado para " + usuario.getEmail() + " com um código para renovar sua senha."
+					+ "Por favor aguarde...";
 			request.getSession().setAttribute("message", retorno);
-			request.getSession().setAttribute("sysubrc", 0);
+			request.getSession().setAttribute("sysubrc", result);
+			request.getSession().setAttribute("login", usuario.getLoginSap());
+			request.getSession().setAttribute("emailBRQ", usuario.getEmail());
+			
 	        //response.sendRedirect("index.jsp");
-	        request.getRequestDispatcher("index.jsp").forward(request, response);
+	        request.getRequestDispatcher("login.jsp").forward(request, response);
 		}
 		else 
 		{
-			retorno = "Ocorreu um erro ao realizar sua solicitação. Por favor tente mais tarde";
+			retorno = "Ocorreu um erro ao realizar sua solicitação: " + erroJCO ;
 			request.getSession().setAttribute("message", retorno);
-			request.getSession().setAttribute("sysubrc", 1);
-			request.getRequestDispatcher("index.jsp").forward(request, response);
+			request.getSession().setAttribute("sysubrc", result);
+			request.getRequestDispatcher("pageRetorno.jsp").forward(request, response);
 	        //response.sendRedirect("index.jsp");
 		}
 	}
